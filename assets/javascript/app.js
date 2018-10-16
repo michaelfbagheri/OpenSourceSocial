@@ -79,10 +79,7 @@ $(document).ready(function () {
     var email = eventAdmin.emailAddress
     var password = eventAdmin.password
     var userName = eventAdmin.name
-
-
     createAccount(email, password, userName);
-
 
     var eventGuest = {
       initialRequirement: eventAdmin.initialRequirement,
@@ -92,7 +89,6 @@ $(document).ready(function () {
     for (var i = 0; i < eventGuest.initialRequirement.length; i++) {
       eventGuest.initialRequirement[i].item[1] = 0
     }
-
     database.ref('/Guests').set({
       eventGuest
 
@@ -122,13 +118,12 @@ function signOut(){
 }
 
 function createAccount(email,password,userName){
-  firebase.auth().createUserWithEmailAndPassword(email,password).then(function(){
-  firebase.auth().currentUser.updateProfile({displayName: userName}).then(function(){
-  var name = firebase.auth().currentUser.displayName 
-  console.log(name)
-  return name
-  })
-  });
+    return firebase.auth().createUserWithEmailAndPassword(email,password).then(function(){
+      return firebase.auth().currentUser.updateProfile({displayName: userName}).then(function(){
+      var name = firebase.auth().currentUser.displayName 
+      console.log(name)
+      })
+    });
   };
 
 //sign up button function 
@@ -139,31 +134,29 @@ $('#signup-btn').on('click', function () {
   var email = $('#users-email').val().trim()
   var password = $('#users-password').val().trim()
   var userName = $('#username').val().trim()
-  
-  createAccount(email, password, userName)
 
-  $('#logged-in').text(userName)
-
+  createAccount(email, password, userName).then(function() { 
+    var uid = firebase.auth().currentUser.uid
+    $('#logged-in').text(userName)
     return database.ref('Guests').once('value', function (snapshot) {
-      var temp = snapshot.val().info
-      console.log('var temp came back as ' + temp)
-      if (typeof temp !== 'undefined') {
-        var tempLength = snapshot.val().info.length
-        database.ref('Guests/info/' + tempLength).set({
+    var bringingTheseItems = {
+      initialRequirement: snapshot.val().eventGuest.initialRequirement,
+      amendedRequirement: snapshot.val().eventGuest.amendedRequirement
+    }     
+        
+    database.ref('Guests/info/' + uid ).set({
           userName,
           email,
-          password
+          password,
+          bringingTheseItems
         })
-      }
-      else {
-        console.log(userName + ' is being created as a new attendee!')
-        database.ref('Guests/info/0').set({
-          userName,
-          email,
-          password
-        })
-      }
     })
+
+
+
+  })
+
+
 })
 
 
@@ -243,8 +236,11 @@ database.ref('/Host').on('value', function (snapshot) {
       }
     }
 
-
-
+    temp = firebase.auth().currentUser
+    console.log (temp)
+    if (typeof temp !== null){
+      $('#logged-in').text(firebase.auth().currentUser.displayName)
+    }
 
     //update/zoom map on to new event plan address 
     var address = snapshot.val().eventAdmin.address
@@ -325,11 +321,11 @@ database.ref('/Guests').on('value', function (snapshotGuests) {
   console.log(temp)
   if (typeof temp !== 'undefined') {
     $('#attendees').empty()
-    for (var i = 0; i < snapshotGuests.val().info.length; i++) {
+    for (var i in temp) {
       $('#attendees').append(
         `
             <tr>
-                <td>${snapshotGuests.val().info[i].userName} </td>
+                <td>${temp[i].userName} </td>
            </tr>  
 
             `
@@ -366,31 +362,11 @@ $('.responsive-table-body-req').on('click', '.req-items', function () {
 
       return database.ref('Guests').once('value').then(function (snapshotGuest) {
         var newQtyGuest = snapshotGuest.val().eventGuest.initialRequirement[tempDataVal].item[1] + 1
-
-        //   var tempName = ''
-        //   var tempEmail = ''
-        //   //Might need to use .then
-        //   firebase.auth().onAuthStateChanged(function (user) {
-        //     tempName = user.displayName
-        //     tempEmail = user.email
-        //   })
-
-        //   temp = snapshotGuest.val().info
-        //   if (typeof temp !== 'undefined'){
-        //     for (var i =0; i < snapshotGuest.val().info.length; i++){
-        //       if (snapshotGuest.cal().info[i].name = tempName){
-        //         database.ref('Guest/info/' + i).update
-        //       }
-        //     }
-
-        //   }
+//Need to add update of the user specific objects for what they're required to bring 
+       
 
 
-        // var userObject = {
-        //   item: snapshotGuest.val().eventGuest.initialRequirement[tempDataVal].item[0],
-        //   Qty: newQtyGuest
-        // }
-        //updating quantity of items still needed on the "to do" side after choice made by user
+
         database.ref('Guests/eventGuest/initialRequirement/' + tempDataVal + '/item').update({
           1: newQtyGuest
         })
@@ -407,10 +383,10 @@ $('.responsive-table-body-req').on('click', '.req-items', function () {
 
       return database.ref('Guests').once('value').then(function (snapshotGuest) {
         var newQtyGuest = snapshotGuest.val().eventGuest.amendedRequirement[tempDataVal].hostAddedLineItemQty + 1
-        // var userObject = {
-        //   item: snapshotGuest.val().eventGuest.initialRequirement[tempDataVal].item[0],
-        //   Qty: newQtyGuest
-        // }
+
+
+
+
         database.ref('Guests/eventGuest/amendedRequirement/' + tempDataVal).update({
           hostAddedLineItemQty: newQtyGuest
         })
