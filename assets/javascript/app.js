@@ -79,7 +79,20 @@ $(document).ready(function () {
     var email = eventAdmin.emailAddress
     var password = eventAdmin.password
     var userName = eventAdmin.name
-    createAccount(email, password, userName);
+    createAccount(email, password, userName).then(function() {
+      var eventGuest = {
+        initialRequirement: eventAdmin.initialRequirement,
+      }
+  
+      //reset count of all items in eventGuest.initialRequirement
+      for (var i = 0; i < eventGuest.initialRequirement.length; i++) {
+        eventGuest.initialRequirement[i].item[1] = 0
+      }
+      database.ref('/Guests').set({
+        eventGuest
+  
+      });
+    })
 
     var eventGuest = {
       initialRequirement: eventAdmin.initialRequirement,
@@ -142,7 +155,17 @@ $('#signup-btn').on('click', function () {
     var bringingTheseItems = {
       initialRequirement: snapshot.val().eventGuest.initialRequirement,
       amendedRequirement: snapshot.val().eventGuest.amendedRequirement
-    }     
+    }    
+//set Qty of items being brought to 0 for the new user
+console.log(bringingTheseItems)
+    for (var i = 0; i < bringingTheseItems.amendedRequirement.length; i++){
+      bringingTheseItems.amendedRequirement[i].hostAddedLineItemQty = 0
+    }
+
+    for ( i = 0; i < bringingTheseItems.initialRequirement.length; i++){
+      bringingTheseItems.initialRequirement[i].item[1] = 0
+    }
+    
         
     database.ref('Guests/info/' + uid ).set({
           userName,
@@ -173,7 +196,6 @@ console.log(firebase.auth().currentUser.displayName + ' is logged in.')
 $('#logged-in').text(firebase.auth().currentUser.displayName)
 
 })
-
 })
 
 
@@ -186,9 +208,7 @@ database.ref('/Host').on('value', function (snapshot) {
 
   var doesHostExist = snapshot.val().eventAdmin
   console.log('does host exist came back as ' + doesHostExist)
-  if (doesHostExist === null) {
-    return
-  } else {
+  if (doesHostExist) {
 
     //if there is anyone logged in go and create a guest profile for them in Firebase
     if (firebase.auth().currentUser) {
@@ -218,7 +238,7 @@ database.ref('/Host').on('value', function (snapshot) {
       }
     }
     var temp = snapshot.val().eventAdmin.amendedRequirement
-    if (typeof temp !== 'undefined') {
+    if (temp) {
       for (var j = 0; j < temp.length; j++) {
         if (snapshot.val().eventAdmin.amendedRequirement[j].hostAddedLineItemQty > 0) {
           $('.responsive-table-body-req').append(
@@ -237,8 +257,8 @@ database.ref('/Host').on('value', function (snapshot) {
     }
 
     temp = firebase.auth().currentUser
-    console.log (temp)
-    if (typeof temp !== null){
+  
+    if (temp){
       $('#logged-in').text(firebase.auth().currentUser.displayName)
     }
 
@@ -275,15 +295,10 @@ database.ref('/Host').on('value', function (snapshot) {
 database.ref('/Guests').on('value', function (snapshotGuests) {
   $('.responsive-table-body-res').empty()
 
-
-
+//updating items that guests are signed up to bring on the DOM 
   var doesGuestsExist = snapshotGuests.val().eventGuest.initialRequirement
-  console.log(doesGuestsExist)
-
-  if (doesGuestsExist === null) {
-    return
-  }
-  else {
+ 
+  if (doesGuestsExist) {
     for (var i = 0; i < snapshotGuests.val().eventGuest.initialRequirement.length; i++) {
       if (snapshotGuests.val().eventGuest.initialRequirement[i].item[1] > 0) {
         $('.responsive-table-body-res').append(
@@ -300,8 +315,7 @@ database.ref('/Guests').on('value', function (snapshotGuests) {
   }
 
   temp = snapshotGuests.val().eventGuest.amendedRequirement
-  console.log(temp)
-  if (typeof temp !== 'undefined') {
+  if (temp) {
     for (var i = 0; i < snapshotGuests.val().eventGuest.amendedRequirement.length; i++) {
       if (snapshotGuests.val().eventGuest.amendedRequirement[i].hostAddedLineItemQty > 0) {
         $('.responsive-table-body-res').append(
@@ -316,25 +330,24 @@ database.ref('/Guests').on('value', function (snapshotGuests) {
       }
     }
   }
-
+  //updating list of attendees on the DOM
   temp = snapshotGuests.val().info
-  console.log(temp)
-  if (typeof temp !== 'undefined') {
+  if (temp) {
     $('#attendees').empty()
     for (var i in temp) {
       $('#attendees').append(
         `
             <tr>
-                <td>${temp[i].userName} </td>
+                <td class="tooltip" >${temp[i].userName}
+                <span class = "tooltiptext">what ever we want to show</span> 
+                </td>
+                
            </tr>  
 
             `
       )
     }
   }
-
-
-
 }, function (errorObject) {
   console.log("Errors handled: " + errorObject.code);
 })
@@ -344,12 +357,13 @@ database.ref('/Guests').on('value', function (snapshotGuests) {
 
 
 
-//Working on this function....currently not ready
+//function handles process of updating database when items are clicked on the screen 
 $('.responsive-table-body-req').on('click', '.req-items', function () {
+  // debugger
   var tempDataVal = $(this).data('orgitem')
   var itemNameAssignedToInfo = ''
   // console.log(tempDataVal)
-  if (typeof tempDataVal !== 'undefined') {
+  if (tempDataVal) {
     return database.ref('/Host').once('value').then(function (snapshot) {
       console.log(snapshot.val())
       var newQty = snapshot.val().eventAdmin.initialRequirement[tempDataVal].item[1] - 1
@@ -360,19 +374,23 @@ $('.responsive-table-body-req').on('click', '.req-items', function () {
         1: newQty
       })
 
+
       return database.ref('Guests').once('value').then(function (snapshotGuest) {
         var newQtyGuest = snapshotGuest.val().eventGuest.initialRequirement[tempDataVal].item[1] + 1
-//Need to add update of the user specific objects for what they're required to bring 
-       
+        var uid = firebase.auth().currentUser.uid
+        var tempString = 'snapshotGuest.val().info.' + uid + '.bringingTheseItems.initialRequirement' + [tempDataVal] + '.item[1]'
+        var newQtyAssignedToGuestOBJ = tempString + 1
 
-
-
+        database.ref('Guests/info/' + uid + '/bringingTheseItems/initialRequirement' + [tempDataVal] + '/item').update({
+          1: newQtyAssignedToGuestOBJ
+        })
         database.ref('Guests/eventGuest/initialRequirement/' + tempDataVal + '/item').update({
           1: newQtyGuest
         })
       })
     })
   }
+  
   else {
     tempDataVal = $(this).data('amenitem')
     return database.ref('/Host').once('value').then(function (snapshot) {
@@ -381,12 +399,19 @@ $('.responsive-table-body-req').on('click', '.req-items', function () {
         hostAddedLineItemQty: newQty
       })
 
+
       return database.ref('Guests').once('value').then(function (snapshotGuest) {
         var newQtyGuest = snapshotGuest.val().eventGuest.amendedRequirement[tempDataVal].hostAddedLineItemQty + 1
+      //collect currently logged in UID
+      
+      var uid = firebase.auth().currentUser.uid
+      var obj1 = snapshotGuest.val().info
+      var newQtyAssignedToGuestOBJ = obj1[uid].bringingTheseItems.amendedRequirement[tempDataVal].hostAddedLineItemQty + 1
+      // var newQtyAssignedToGuestOBJ = tempQty + 1
 
-
-
-
+      database.ref('Guests/info/' + uid + '/bringingTheseItems/amendedRequirement/' + tempDataVal).update({
+        hostAddedLineItemQty: newQtyAssignedToGuestOBJ
+      })
         database.ref('Guests/eventGuest/amendedRequirement/' + tempDataVal).update({
           hostAddedLineItemQty: newQtyGuest
         })
