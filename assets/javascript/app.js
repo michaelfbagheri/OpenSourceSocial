@@ -330,22 +330,52 @@ database.ref('/Guests').on('value', function (snapshotGuests) {
       }
     }
   }
+
+
+//testing how to build the string that shows what each guest is bringing
+  var testingStringBuild = '';
+
+
+
+  var tempCountAmend;
+  // var tempCountOrg;
   //updating list of attendees on the DOM
   temp = snapshotGuests.val().info
   if (temp) {
     $('#attendees').empty()
     for (var i in temp) {
+      tempCountAmend = temp[i].bringingTheseItems.amendedRequirement;
+      tempCountOrg = temp[i].bringingTheseItems.initialRequirement;
+        for (var j in tempCountAmend){
+         
+          if (tempCountAmend[j].hostAddedLineItemQty > 0){
+            testingStringBuild = testingStringBuild +  '\n' + tempCountAmend[j].hostAddedLineItem + ": " + tempCountAmend[j].hostAddedLineItemQty;
+          }
+        }
+        // j = 0;
+        // for (var j in tempCountOrg){
+        //   if (tempCountOrg[j].hostAddedLineItemQty > 0){
+        //     testingStringBuild = tempCount[j].hostAddedLineItem + ": " + tempCount[j].hostAddedLineItemQty;
+        //   }
+        // }
+          
+
+
+
+
       $('#attendees').append(
         `
             <tr>
                 <td class="tooltip" >${temp[i].userName}
-                <span class = "tooltiptext">what ever we want to show</span> 
+                <span class = "tooltiptext">${testingStringBuild}</span> 
                 </td>
                 
            </tr>  
 
             `
       )
+      testingStringBuild = '';
+
     }
   }
 }, function (errorObject) {
