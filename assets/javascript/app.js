@@ -411,6 +411,15 @@ $(document).ready(function () {
 
   //function handles process of updating database when items are clicked on the screen 
   $('.responsive-table-body-req').on('click', '.req-items', function () {
+
+    var uid = firebase.auth().currentUser.uid
+    if (uid){
+
+
+    
+
+
+
     var tempDataVal = $(this).data('orgitem')
     var itemNameAssignedToInfo = ''
     // console.log(tempDataVal)
@@ -482,7 +491,7 @@ $(document).ready(function () {
             var newQtyGuest = snapshotGuest.val().eventGuest.amendedRequirement[tempDataVal].hostAddedLineItemQty + 1
             //collect currently logged in UID
 
-            var uid = firebase.auth().currentUser.uid
+             uid = firebase.auth().currentUser.uid
             var obj1 = snapshotGuest.val().info
             var newQtyAssignedToGuestOBJ = obj1[uid].bringingTheseItems.amendedRequirement[tempDataVal].hostAddedLineItemQty + 1
             // var newQtyAssignedToGuestOBJ = tempQty + 1
@@ -497,6 +506,7 @@ $(document).ready(function () {
         })
       }
     }
+  }
   })
 
 
