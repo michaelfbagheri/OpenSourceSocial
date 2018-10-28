@@ -82,7 +82,7 @@ $(document).ready(function () {
 
     var tempObjHolder = JSON.stringify(eventAdmin.initialRequirement)
 
-    debugger
+    
     createAccount(email, password, userName).then(function () {
 
 
@@ -354,9 +354,6 @@ $(document).ready(function () {
 
     //testing how to build the string that shows what each guest is bringing
     var testingStringBuild = '';
-
-
-
     var tempCountAmend;
     // var tempCountOrg;
     //updating list of attendees on the DOM
@@ -372,7 +369,12 @@ $(document).ready(function () {
             testingStringBuild = testingStringBuild + '\n' + tempCountAmend[j].hostAddedLineItem + ": " + tempCountAmend[j].hostAddedLineItemQty;
           }
         }
-        // j = 0;
+
+        for (var x in tempCountOrg){
+          if (tempCountOrg[x].item[1]>0){
+            testingStringBuild = testingStringBuild + '\n' + tempCountOrg[x].item[0] + ': ' + tempCountOrg[x].item[1]; 
+          }
+        }
         // for (var j in tempCountOrg){
         //   if (tempCountOrg[j].hostAddedLineItemQty > 0){
         //     testingStringBuild = tempCount[j].hostAddedLineItem + ": " + tempCount[j].hostAddedLineItemQty;
@@ -409,7 +411,6 @@ $(document).ready(function () {
 
   //function handles process of updating database when items are clicked on the screen 
   $('.responsive-table-body-req').on('click', '.req-items', function () {
-    // debugger
     var tempDataVal = $(this).data('orgitem')
     var itemNameAssignedToInfo = ''
     // console.log(tempDataVal)
@@ -458,7 +459,7 @@ $(document).ready(function () {
     }
 
     else {
-      debugger
+    
       tempDataVal = $(this).data('amenitem')
       if (tempDataVal === 0) {
         tempDataVal++
@@ -533,7 +534,7 @@ $(document).ready(function () {
         var tempObj;
         return database.ref('Guests/info').once('value').then(function (snapshotGuests) {
           tempObj = snapshotGuests.val()
-          debugger
+    
           var countThroughGuests;
           for (var i in tempObj) {
             countThroughGuests = tempObj[i].bringingTheseItems.amendedRequirement;
@@ -562,7 +563,6 @@ $(document).ready(function () {
         var tempObj;
         return database.ref('Guests/info').once('value').then(function (snapshotGuests) {
           tempObj = snapshotGuests.val()
-          debugger
           var countThroughGuests;
 
           for (var i in tempObj) {
