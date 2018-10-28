@@ -73,7 +73,8 @@ $(document).ready(function () {
       password: getHostPassword,
       eventDate: getEventDate,
       eventTime: getEventTime,
-      initialRequirement: initialRequirement
+      initialRequirement: initialRequirement,
+      adminUID: ''
     }
 
     var email = eventAdmin.emailAddress
@@ -82,9 +83,10 @@ $(document).ready(function () {
 
     var tempObjHolder = JSON.stringify(eventAdmin.initialRequirement)
 
-    
-    createAccount(email, password, userName).then(function () {
 
+    createAccount(email, password, userName).then(function (uid) {
+
+      eventAdmin.adminUID = uid
 
       var eventGuest = {
         initialRequirement: JSON.parse(tempObjHolder)
@@ -101,23 +103,8 @@ $(document).ready(function () {
 
       database.ref('/Guests').set({
         eventGuest
-
       });
-
-      // var eventGuest = {
-      //   initialRequirement: eventAdmin.initialRequirement,
-      // }
-
-      //reset count of all items in eventGuest.initialRequirement
-      // for (var i = 0; i < eventGuest.initialRequirement.length; i++) {
-      //   eventGuest.initialRequirement[i].item[1] = 0
-      // }
-      // database.ref('/Guests').set({
-      //   eventGuest
-
-      // });
     })
-
 
   });
 
@@ -148,6 +135,8 @@ $(document).ready(function () {
       return firebase.auth().currentUser.updateProfile({ displayName: userName }).then(function () {
         var name = firebase.auth().currentUser.displayName
         console.log(name)
+        var uid = firebase.auth().currentUser.uid
+        return uid;
       })
     });
   };
@@ -370,9 +359,9 @@ $(document).ready(function () {
           }
         }
 
-        for (var x in tempCountOrg){
-          if (tempCountOrg[x].item[1]>0){
-            testingStringBuild = testingStringBuild + '\n' + tempCountOrg[x].item[0] + ': ' + tempCountOrg[x].item[1]; 
+        for (var x in tempCountOrg) {
+          if (tempCountOrg[x].item[1] > 0) {
+            testingStringBuild = testingStringBuild + '\n' + tempCountOrg[x].item[0] + ': ' + tempCountOrg[x].item[1];
           }
         }
         // for (var j in tempCountOrg){
@@ -413,63 +402,16 @@ $(document).ready(function () {
   $('.responsive-table-body-req').on('click', '.req-items', function () {
 
     var uid = firebase.auth().currentUser.uid
-    if (uid){
-
-
-    
+    if (uid) {
 
 
 
-    var tempDataVal = $(this).data('orgitem')
-    var itemNameAssignedToInfo = ''
-    // console.log(tempDataVal)
-    if (tempDataVal === 0) {
-      tempDataVal++
-      var setter = 1;
-    }
-    if (tempDataVal) {
-
-      if (setter) {
-        tempDataVal--
-      }
-
-      return database.ref('/Host').once('value').then(function (snapshot) {
-        console.log(snapshot.val())
-        var newQty = snapshot.val().eventAdmin.initialRequirement[tempDataVal].item[1] - 1
-        itemNameAssignedToInfo = snapshot.val().eventAdmin.initialRequirement[tempDataVal].item[0]
-        console.log(itemNameAssignedToInfo + ' was just clicked')
-        //updating quantity of items still needed on the "to do" side after choice made by user
-        database.ref('Host/eventAdmin/initialRequirement/' + tempDataVal + '/item').update({
-          1: newQty
-        })
-
-
-        return database.ref('Guests').once('value').then(function (snapshotGuest) {
-          var newQtyGuest = snapshotGuest.val().eventGuest.initialRequirement[tempDataVal].item[1] + 1
-          var uid = firebase.auth().currentUser.uid
-          var obj1 = snapshotGuest.val().info
-          var newQtyAssignedToGuestOBJ = obj1[uid].bringingTheseItems.initialRequirement[tempDataVal].item[1] + 1
-          console.log(newQtyAssignedToGuestOBJ)
 
 
 
-          // var tempString = 'snapshotGuest.val().info.' + uid + '.bringingTheseItems.initialRequirement' + [tempDataVal] + '.item[1]'
-
-
-
-          database.ref('Guests/info/' + uid + '/bringingTheseItems/initialRequirement/' + tempDataVal + '/item/').update({
-            1: newQtyAssignedToGuestOBJ
-          })
-          database.ref('Guests/eventGuest/initialRequirement/' + tempDataVal + '/item').update({
-            1: newQtyGuest
-          })
-        })
-      })
-    }
-
-    else {
-    
-      tempDataVal = $(this).data('amenitem')
+      var tempDataVal = $(this).data('orgitem')
+      var itemNameAssignedToInfo = ''
+      // console.log(tempDataVal)
       if (tempDataVal === 0) {
         tempDataVal++
         var setter = 1;
@@ -481,115 +423,177 @@ $(document).ready(function () {
         }
 
         return database.ref('/Host').once('value').then(function (snapshot) {
-          var newQty = snapshot.val().eventAdmin.amendedRequirement[tempDataVal].hostAddedLineItemQty - 1
-          database.ref('Host/eventAdmin/amendedRequirement/' + tempDataVal).update({
-            hostAddedLineItemQty: newQty
+          console.log(snapshot.val())
+          var newQty = snapshot.val().eventAdmin.initialRequirement[tempDataVal].item[1] - 1
+          itemNameAssignedToInfo = snapshot.val().eventAdmin.initialRequirement[tempDataVal].item[0]
+          console.log(itemNameAssignedToInfo + ' was just clicked')
+          //updating quantity of items still needed on the "to do" side after choice made by user
+          database.ref('Host/eventAdmin/initialRequirement/' + tempDataVal + '/item').update({
+            1: newQty
           })
 
 
           return database.ref('Guests').once('value').then(function (snapshotGuest) {
-            var newQtyGuest = snapshotGuest.val().eventGuest.amendedRequirement[tempDataVal].hostAddedLineItemQty + 1
-            //collect currently logged in UID
-
-             uid = firebase.auth().currentUser.uid
+            var newQtyGuest = snapshotGuest.val().eventGuest.initialRequirement[tempDataVal].item[1] + 1
+            var uid = firebase.auth().currentUser.uid
             var obj1 = snapshotGuest.val().info
-            var newQtyAssignedToGuestOBJ = obj1[uid].bringingTheseItems.amendedRequirement[tempDataVal].hostAddedLineItemQty + 1
-            // var newQtyAssignedToGuestOBJ = tempQty + 1
+            var newQtyAssignedToGuestOBJ = obj1[uid].bringingTheseItems.initialRequirement[tempDataVal].item[1] + 1
+            console.log(newQtyAssignedToGuestOBJ)
 
-            database.ref('Guests/info/' + uid + '/bringingTheseItems/amendedRequirement/' + tempDataVal).update({
-              hostAddedLineItemQty: newQtyAssignedToGuestOBJ
+
+
+            // var tempString = 'snapshotGuest.val().info.' + uid + '.bringingTheseItems.initialRequirement' + [tempDataVal] + '.item[1]'
+
+
+
+            database.ref('Guests/info/' + uid + '/bringingTheseItems/initialRequirement/' + tempDataVal + '/item/').update({
+              1: newQtyAssignedToGuestOBJ
             })
-            database.ref('Guests/eventGuest/amendedRequirement/' + tempDataVal).update({
-              hostAddedLineItemQty: newQtyGuest
+            database.ref('Guests/eventGuest/initialRequirement/' + tempDataVal + '/item').update({
+              1: newQtyGuest
             })
           })
         })
       }
+
+      else {
+
+        tempDataVal = $(this).data('amenitem')
+        if (tempDataVal === 0) {
+          tempDataVal++
+          var setter = 1;
+        }
+        if (tempDataVal) {
+
+          if (setter) {
+            tempDataVal--
+          }
+
+          return database.ref('/Host').once('value').then(function (snapshot) {
+            var newQty = snapshot.val().eventAdmin.amendedRequirement[tempDataVal].hostAddedLineItemQty - 1
+            database.ref('Host/eventAdmin/amendedRequirement/' + tempDataVal).update({
+              hostAddedLineItemQty: newQty
+            })
+
+
+            return database.ref('Guests').once('value').then(function (snapshotGuest) {
+              var newQtyGuest = snapshotGuest.val().eventGuest.amendedRequirement[tempDataVal].hostAddedLineItemQty + 1
+              //collect currently logged in UID
+
+              uid = firebase.auth().currentUser.uid
+              var obj1 = snapshotGuest.val().info
+              var newQtyAssignedToGuestOBJ = obj1[uid].bringingTheseItems.amendedRequirement[tempDataVal].hostAddedLineItemQty + 1
+              // var newQtyAssignedToGuestOBJ = tempQty + 1
+
+              database.ref('Guests/info/' + uid + '/bringingTheseItems/amendedRequirement/' + tempDataVal).update({
+                hostAddedLineItemQty: newQtyAssignedToGuestOBJ
+              })
+              database.ref('Guests/eventGuest/amendedRequirement/' + tempDataVal).update({
+                hostAddedLineItemQty: newQtyGuest
+              })
+            })
+          })
+        }
+      }
     }
-  }
   })
 
 
 
   //Zone-4 Add "to do list" by Host (this is amendment to his/her original list)
   $('#submit-item-name').on('click', function () {
-    console.log('Host added a new Item to bring')
+
+   
+    var uid = firebase.auth().currentUser.uid
+ 
+    return database.ref('/Host').once('value').then(function(snapshot) {
+     var  hostId = snapshot.val().eventAdmin.adminUID
+     console.log(hostId)
+  
+
+    if (uid === hostId) {
+
+      console.log('Host added a new Item to bring')
 
 
-    //Capture input item name 
-    var hostAddedLineItem = $('#add-item-name').val().trim()
-    //clear input field
-    $('#to-do-input').val('')
-    //capture input Qty
-    var hostAddedLineItemQty = $('#add-item-qty').val().trim()
-    $('#add-item-qty').val('')
+      //Capture input item name 
+      var hostAddedLineItem = $('#add-item-name').val().trim()
+      //clear input field
+      $('#to-do-input').val('')
+      //capture input Qty
+      var hostAddedLineItemQty = $('#add-item-qty').val().trim()
+      $('#add-item-qty').val('')
 
-    return database.ref('Host/eventAdmin/amendedRequirement').once('value').then(function (snapshotHostAdded) {
+      return database.ref('Host/eventAdmin/amendedRequirement').once('value').then(function (snapshotHostAdded) {
 
-      console.log(snapshotHostAdded)
-      var numExistingRecords = snapshotHostAdded.numChildren()
-      console.log(numExistingRecords)
+        console.log(snapshotHostAdded)
+        var numExistingRecords = snapshotHostAdded.numChildren()
+        console.log(numExistingRecords)
 
 
-      if (typeof numExistingRecords === 'undefined') {
-        numExistingRecords = 0
-        database.ref('Host/eventAdmin/amendedRequirement/' + numExistingRecords).set({
-          hostAddedLineItem,
-          hostAddedLineItemQty
-        })
-        database.ref('Guests/eventGuest/amendedRequirement/' + numExistingRecords).set({
-          hostAddedLineItem,
-          hostAddedLineItemQty: 0
-        })
-        var tempObj;
-        return database.ref('Guests/info').once('value').then(function (snapshotGuests) {
-          tempObj = snapshotGuests.val()
-    
-          var countThroughGuests;
-          for (var i in tempObj) {
-            countThroughGuests = tempObj[i].bringingTheseItems.amendedRequirement;
-            count = 0;
-            for (var j in countThroughGuests) {
-              count++
+        if (typeof numExistingRecords === 'undefined') {
+          numExistingRecords = 0
+          database.ref('Host/eventAdmin/amendedRequirement/' + numExistingRecords).set({
+            hostAddedLineItem,
+            hostAddedLineItemQty
+          })
+          database.ref('Guests/eventGuest/amendedRequirement/' + numExistingRecords).set({
+            hostAddedLineItem,
+            hostAddedLineItemQty: 0
+          })
+          var tempObj;
+          return database.ref('Guests/info').once('value').then(function (snapshotGuests) {
+            tempObj = snapshotGuests.val()
+
+            var countThroughGuests;
+            for (var i in tempObj) {
+              countThroughGuests = tempObj[i].bringingTheseItems.amendedRequirement;
+              count = 0;
+              for (var j in countThroughGuests) {
+                count++
+              }
+
+
+
+              database.ref('Guests/info/' + i + '/bringingTheseItems/amendedRequirement/' + count).set({
+                hostAddedLineItem,
+                hostAddedLineItemQty: 0
+              })
             }
+          })
+        } else {
+          database.ref('Host/eventAdmin/amendedRequirement/' + numExistingRecords).set({
+            hostAddedLineItem,
+            hostAddedLineItemQty
+          })
+          database.ref('Guests/eventGuest/amendedRequirement/' + numExistingRecords).set({
+            hostAddedLineItem,
+            hostAddedLineItemQty: 0
+          })
+          var tempObj;
+          return database.ref('Guests/info').once('value').then(function (snapshotGuests) {
+            tempObj = snapshotGuests.val()
+            var countThroughGuests;
 
+            for (var i in tempObj) {
+              countThroughGuests = tempObj[i].bringingTheseItems.amendedRequirement;
+              count = 0;
+              for (var j in countThroughGuests) {
+                count++
+              }
 
-
-            database.ref('Guests/info/' + i + '/bringingTheseItems/amendedRequirement/' + count).set({
-              hostAddedLineItem,
-              hostAddedLineItemQty: 0
-            })
-          }
-        })
-      } else {
-        database.ref('Host/eventAdmin/amendedRequirement/' + numExistingRecords).set({
-          hostAddedLineItem,
-          hostAddedLineItemQty
-        })
-        database.ref('Guests/eventGuest/amendedRequirement/' + numExistingRecords).set({
-          hostAddedLineItem,
-          hostAddedLineItemQty: 0
-        })
-        var tempObj;
-        return database.ref('Guests/info').once('value').then(function (snapshotGuests) {
-          tempObj = snapshotGuests.val()
-          var countThroughGuests;
-
-          for (var i in tempObj) {
-            countThroughGuests = tempObj[i].bringingTheseItems.amendedRequirement;
-            count = 0;
-            for (var j in countThroughGuests) {
-              count++
+              database.ref('Guests/info/' + i + '/bringingTheseItems/amendedRequirement/' + count).set({
+                hostAddedLineItem,
+                hostAddedLineItemQty: 0
+              })
             }
-
-            database.ref('Guests/info/' + i + '/bringingTheseItems/amendedRequirement/' + count).set({
-              hostAddedLineItem,
-              hostAddedLineItemQty: 0
-            })
-          }
-        })
-      }
-    })
+          })
+        }
+      })
+    } else{
+      console.log('only Host/Admin can add items to bring')
+    }
+  })
   })
 
 
