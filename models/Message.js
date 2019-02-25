@@ -6,7 +6,7 @@ const MessageSchema = new Schema({
   message: { type: String, required: true },
   postdate: { type: Date, default: Date.now },
   user: { type: Schema.Types.ObjectId, ref: "User" },
-  need: { type: Schema.Types.ObjectId, ref: "Need" }
+  event: { type: Schema.Types.ObjectId, ref: "Event" }
 });
 
 // This creates our model from the above schema, using mongoose's model method

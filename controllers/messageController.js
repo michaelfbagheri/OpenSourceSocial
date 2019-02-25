@@ -2,9 +2,9 @@ const db = require('../models');
 
 // Defining methods message controller
 module.exports = {
-  findAll: function(req, res) {
+  findAll: function (req, res) {
     db.Message.find({
-      need: req.query.needId
+      event: req.query.eventId
     })
       .populate('user', {
         _id: true,
@@ -17,24 +17,24 @@ module.exports = {
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
-  findById: function(req, res) {
+  findById: function (req, res) {
     db.Message.findById(req.params.id)
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
-  create: function(req, res) {
+  create: function (req, res) {
     const newMessage = req.body;
     newMessage.user = req.session.user._id;
     db.Message.create(newMessage)
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
-  update: function(req, res) {
+  update: function (req, res) {
     db.Message.findOneAndUpdate({ _id: req.params.id }, req.body)
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
-  remove: function(req, res) {
+  remove: function (req, res) {
     db.Message.findOneAndDelete({ _id: req.params.id })
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
