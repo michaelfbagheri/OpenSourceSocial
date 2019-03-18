@@ -8,6 +8,7 @@ router.route('/')
 router.route('/:event')
     .delete(attendeeController.deleteAttendeeFromOneEvent)
     .get(attendeeController.getAllAttendeesOfOneEvent)
+    .put(attendeeController.confirmAttendee)
 
 
 module.exports = router;

@@ -37,7 +37,8 @@ module.exports = {
                 return db.Attendee.create({
                     host: true,
                     user: dbModel.user,
-                    event: dbModel._id
+                    event: dbModel._id,
+                    confirmed: true
                 })
                     .then(dbAttendee => res.json(dbAttendee))
             })

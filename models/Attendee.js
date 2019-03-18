@@ -6,7 +6,8 @@ const AttendeeSchema = new Schema({
     RSVPdate: { type: Date, default: Date.now },
     user: { type: Schema.Types.ObjectId, ref: "User" },
     event: { type: Schema.Types.ObjectId, ref: "Event" },
-    eventStatus: { type: String, required: true, default: "active" }
+    eventStatus: { type: String, required: true, default: "active" },
+    confirmed: { type: Boolean, default: false }
 });
 
 

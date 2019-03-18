@@ -25,8 +25,22 @@ module.exports = {
     create: function (req, res) {
         const newReview = req.body;
         newReview.user = req.session.user._id;
-        db.Review.create(newReview)
-            .then(dbModel => res.json(dbModel))
+        console.log(req.session.user._id)
+        db.Attendee.findOne({
+            user: newReview.user,
+            event: newReview.event,
+            confirmed: true,
+            eventStatus: "complete"
+        }).then(dbModel => {
+            console.log(dbModel)
+            if (dbModel) {
+                return db.Review.create(newReview)
+                    .then(reviewCreated => res.json(reviewCreated))
+            }
+            else {
+                res.json("you did not attend and can't rate/comment on this event")
+            }
+        })
             .catch(err => res.status(422).json(err));
     },
     update: function (req, res) {
