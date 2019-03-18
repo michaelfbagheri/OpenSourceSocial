@@ -42,7 +42,7 @@ app.use(passport.session());
 app.use(routes);
 
 const MONGODB_URI =
-  process.env.MONGODB_URI || 'mongodb://localhost/gooddeedsdb';
+  process.env.MONGODB_URI || 'mongodb://localhost/openSourceSocial';
 
 // Connect to the Mongo DB
 mongoose.connect(

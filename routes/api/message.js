@@ -6,6 +6,7 @@ router
   .post(messageController.create)
   .get(messageController.findAll);
 
-router.route('/:id').delete(messageController.remove);
+router.route('/:id')
+  .delete(messageController.remove);
 
 module.exports = router;

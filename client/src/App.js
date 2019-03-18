@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Landing from './components/Pages/Landing';
+import Landing from './Pages/Landing';
+import Main from './Pages/Main';
+
 
 
 
@@ -11,6 +13,7 @@ class App extends Component {
       <Router>
         <Switch>
           <Route exact path='/' component={Landing} />
+          <Route exact path='/main' component={Main} />
         </Switch>
       </Router>
     );

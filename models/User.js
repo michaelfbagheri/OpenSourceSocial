@@ -1,18 +1,22 @@
-var mongoose = require('mongoose');
+const mongoose = require("mongoose");
 var bcrypt = require('bcrypt-nodejs');
 
 
 
 const userSchema = mongoose.Schema({
-    firstName: { type: String },
-    lastName: { type: String },
-    imageurl: { type: String },
-    userName: { type: String },
-    email: { type: String },
-    password: { type: String },
-    deed: { type: [Object], require: false },
-    rating: { type: Number, require: false },
+    firstName: { type: String, require: true },
+    lastName: { type: String, require: true },
+    imageurl: { type: String, require: false },
+    userName: { type: String, require: true },
+    email: { type: String, require: true },
+    password: { type: String, require: true },
+    Netrating: { type: Number, require: false },
+    hostingCred: { type: Number, require: false },
+    guestCred: { type: Number, require: false }
 });
+
+
+
 
 userSchema.methods.encryptPassword = function (password) {
     return bcrypt.hashSync(password, bcrypt.genSaltSync(10), null);

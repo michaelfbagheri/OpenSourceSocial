@@ -16,7 +16,7 @@ router.route('/signup')
                         req.user = ${req.session.user}`)
             res.json({
                 success: true,
-                redirect: "/main/get-help"
+                redirect: "/main"
             })
         }
     );
@@ -43,7 +43,7 @@ router
                         req.user = ${req.session.user}`)
             res.json({
                 success: true,
-                redirect: "/main/get-help"
+                redirect: "/main"
             })
         }
     );
