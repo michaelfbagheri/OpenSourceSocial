@@ -6,7 +6,7 @@ import Button from '@material-ui/core/Button';
 const styles = {
   card: {
     Width: '100%',
-    // minHeight: '200px',
+    minHeight: '400px',
     // maxWidth: '275px',
     border: 'solid blue 1px',
     // position: 'fixed',
