@@ -20,7 +20,7 @@ class Main extends Component {
           <Grid item xs={12} sm={2}>
             <PartyInfo></PartyInfo>
           </Grid>
-          <Grid item xs={12} sm={8} style={{ position: 'auto' }}>
+          <Grid item xs={12} sm={8} style={{ position: 'auto', margin: '' }}>
             <Card>
               <div style={{ float: 'right' }}>
                 <Calendar></Calendar>
