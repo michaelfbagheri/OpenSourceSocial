@@ -14,6 +14,7 @@ const PORT = process.env.PORT || 3001;
 require('./config/passport');
 
 
+
 // Define middleware here
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -22,6 +23,8 @@ app.use(cookieParser());
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));
 }
+
+app.use(express.static(__dirname +'/public'));
 
 //using the store: new MongoStore creates a new colection in our dB to store the sessions info (cookie)
 //this way the web browser refresh will not delete it
