@@ -12,7 +12,7 @@ router.use(function (req, res) {
 
 router.use((err, req, res, next) => {
   err.statusCode = err.statusCode || 500
-  let msg = err.message
+  let msg = err.message,
   // If we are in production, override the message we
   // expose to the client (for security reasons)
   if (process.env.NODE_ENV === "production") {
