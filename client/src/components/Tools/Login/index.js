@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { Input, Row, Button, Modal, Card } from 'react-materialize';
 import NewUser from '../NewUser';
 import { uploadFile } from 'react-s3';
 import './style.css';
 import Auth from '../../../utils/Auth';
 import { config } from '../../../config/Config';
+
 
 // import { runInThisContext } from 'vm';
 
@@ -125,6 +125,8 @@ class Login extends Component {
     }
   }
 
+
+
   render() {
     //this statement is checking ot see if user is authenticated as set by the super constructor up top
     //if not authenticated they can proceed
@@ -134,28 +136,56 @@ class Login extends Component {
 
     return (
 
-      <Card
-        id="login-card">
-        <Modal id='new-user-modal' trigger={
-          <Row>
-            <Button className='new-user-button'>Create New User Account</Button>
-          </Row>
-        }>
-          <NewUser
-            header='New User'
-            handleInputChange={this.handleInputChange}
-            firstName={this.state.firstName}
-            lastName={this.state.lastName}
-            imageurl={this.state.imageurl}
-            userName={this.state.userName}
-            email={this.state.email}
-            password={this.state.password}
-            passwordConfirmed={this.state.passwordConfirmed}
-            handleModalFormSubmit={this.handleModalFormSubmit}
-            uploadHandler={this.uploadHandler}
-          />
-        </Modal>
-        <Input
+      <div id="login-card">
+        <div className='row'>
+          <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+            Sing up
+          </button>
+        </div>
+        <div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <NewUser
+                  header='New User'
+                  handleInputChange={this.handleInputChange}
+                  firstName={this.state.firstName}
+                  lastName={this.state.lastName}
+                  imageurl={this.state.imageurl}
+                  userName={this.state.userName}
+                  email={this.state.email}
+                  password={this.state.password}
+                  passwordConfirmed={this.state.passwordConfirmed}
+                  handleModalFormSubmit={this.handleModalFormSubmit}
+                  uploadHandler={this.uploadHandler}
+                />
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" className="btn btn-primary" onClick={this.handleModalFormSubmit}>Save changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+        <input
           // style={{textAlig: 'left'}}
           name='email'
           onChange={this.handleInputChange}
@@ -163,17 +193,17 @@ class Login extends Component {
           label='Email'
           s={12}
         />
-        <Input
+        <input
           name='password'
           onChange={this.handleInputChange}
           type='password'
           label='password'
           s={12}
         />
-        <Button id='login-button' waves='light' onClick={this.LoginHandler}>
+        <button id='login-button' waves='light' onClick={this.LoginHandler}>
           Login
-        </Button>
-      </Card>
+        </button>
+      </div >
     );
   }
 }

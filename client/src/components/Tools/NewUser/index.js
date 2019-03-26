@@ -3,70 +3,78 @@
 // Name, Address, Username, Password, Income, Date of Birth, Race, Ethnicity
 
 import React from 'react';
-import { Row, Input, Button } from 'react-materialize';
+
 import './style.css';
 
 // Rewrite as Class with State passing using ID and Handler with calls /api/needs/ POST request
 
 function NewUser(props) {
   return (
-    <div>
-      <Row>
-        <Input
+    <div className='conatiner'>
+      <div className='row'>
+        <input
+          className='input-signup'
+          placeholder='First Name'
           name='firstName'
-          s={12} l={6}
           label='First Name'
           onChange={props.handleInputChange}
           required
         />
-        <Input
+        <input
+          className='input-signup'
+          placeholder='Last Name'
           name='lastName'
-          s={12} l={6}
           label='Last Name'
           onChange={props.handleInputChange}
           required
         />
-        <Input
+      </div>
+      <div className='row'>
+        <input
+          className='input-signup'
           validate
+          placeholder='email'
           name='email'
           type='email'
           label='Email'
-          s={12}
           onChange={props.handleInputChange}
         />
-        <Input
+        <input
+          className='input-signup'
+          placeholder='Username'
           name='userName'
           type='text'
           label='Username'
-          s={12}
           onChange={props.handleInputChange}
         />
-        <Input
+      </div>
+      <div className='row'>
+        <input
+          className='input-signup'
+          placeholder='password'
+          name='password'
+          type='password'
+          label='Password'
+          onChange={props.handleInputChange}
+        />
+        <input
+          className='input-signup'
+          placeholder='Confirm Password'
+          name='passwordConfirmed'
+          type='password'
+          label='Confirm Password'
+          onChange={props.handleInputChange}
+        />
+        <input
+          className='input-signup'
+          placeholder='Image'
           onChange={props.uploadHandler}
           name='imageurl'
           type='file'
           label='Add Photo'
-          s={12}
           placeholder='JPG, PNG, or GIFs only'
         />
-        <Input
-          name='password'
-          type='password'
-          label='Password'
-          s={12}
-          onChange={props.handleInputChange}
-        />
-        <Input
-          name='passwordConfirmed'
-          type='password'
-          label='Confirm Password'
-          s={12}
-          onChange={props.handleInputChange}
-        />
-      </Row>
-      <Button id='submit-new-user-button' waves='light' onClick={props.handleModalFormSubmit} type='submit'>
-        Submit
-      </Button>
+      </div>
     </div>
   );
 }

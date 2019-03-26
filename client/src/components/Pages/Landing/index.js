@@ -1,11 +1,14 @@
-import React from "react";
+import React from 'react';
+import Login from '../../Tools/Login';
 
-function Landing() {
+function Landing(props) {
   return (
     <section className="row">
-        <div className="col-md-6 event-list">login</div>
+      <div className="col-md-6 event-list">
+        <Login />
+        login</div>
       <div className="col-md-6 event-module">sign-up</div>
-    </section>
+    </section >
   );
 }
 

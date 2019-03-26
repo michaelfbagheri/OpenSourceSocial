@@ -1,13 +1,13 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react';
 
 class Main_Layout extends Component {
-        render(){
-            return (
-                <main className='container'>
+  render() {
+    return (
+      <main className='container'>
 
-                </main>
-            )
-    }
+      </main>
+    );
+  }
 }
 
-export default Main_Layout
+export default Main_Layout;
