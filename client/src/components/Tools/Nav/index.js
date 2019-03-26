@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const Nav = (props) => {
+const Nav = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <Link className="navbar-brand" to="/">Navbar</Link>
@@ -20,7 +20,7 @@ const Nav = (props) => {
           </li>
           <li className="nav-item">
             <Link
-              onClick={props.logout}
+              // onClick={props.logout}
               to='/logout'
               className="nav-link "
             >Logout</Link>

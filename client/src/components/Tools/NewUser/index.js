@@ -67,12 +67,11 @@ function NewUser(props) {
         />
         <input
           className='input-signup'
-          placeholder='Image'
+          placeholder='JPG, PNG, or GIFs only'
           onChange={props.uploadHandler}
           name='imageurl'
           type='file'
           label='Add Photo'
-          placeholder='JPG, PNG, or GIFs only'
         />
       </div>
     </div>
