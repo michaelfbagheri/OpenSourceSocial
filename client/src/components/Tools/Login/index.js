@@ -4,55 +4,56 @@ import { uploadFile } from 'react-s3';
 import './style.css';
 import Auth from '../../../utils/Auth';
 import { config } from '../../../config/Config';
-
+import { connect } from 'react-redux';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import Main from '../../Pages/Main';
 
 // import { runInThisContext } from 'vm';
 
 class Login extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      firstName: '',
-      lastName: '',
-      userName: '',
-      email: '',
-      imageurl: '',
-      password: '',
-      passwordConfirmed: ''
-    };
 
-    Auth.session().then(user => {
-      this.setState({
-        user: user,
-        authenticated: user.authenticated
-      });
-    });
+  state = {
+    firstName: '',
+    lastName: '',
+    userName: '',
+    email: '',
+    imageurl: '',
+    password: '',
+    passwordConfirmed: ''
+  };
 
-    this.reactS3config = {
-      bucketName: 'gooddeeds-new',
-      region: 'us-east-1',
-      accessKeyId: config.awsKey,
-      secretAccessKey: config.awsSecret
-    };
+  // Auth.session().then(user => {
+  //   this.setState({
+  //     user: user,
+  //     authenticated: user.authenticated
+  //   });
+  // });
 
-    this.uploadHandler = this.uploadHandler.bind(this);
-    this.handleInputChange = this.handleInputChange.bind(this);
-    this.LoginHandler = this.LoginHandler.bind(this);
-    this.handleModalFormSubmit = this.handleModalFormSubmit.bind(this);
-  }
+  // this.reactS3config = {
+  //   bucketName: 'gooddeeds-new',
+  //   region: 'us-east-1',
+  //   accessKeyId: config.awsKey,
+  //   secretAccessKey: config.awsSecret
+  // };
 
-  uploadHandler(event) {
-    const imagefile = event.target.files[0];
-    console.log(imagefile);
-    uploadFile(imagefile, this.reactS3config)
-      .then(data => {
-        console.log(data.location);
-        this.setState({ imageurl: data.location });
-      })
-      .catch(err => console.error(err));
-  }
+  // this.uploadHandler = this.uploadHandler.bind(this);
+  // this.handleInputChange = this.handleInputChange.bind(this);
+  // this.LoginHandler = this.LoginHandler.bind(this);
+  // this.handleModalFormSubmit = this.handleModalFormSubmit.bind(this);
 
-  handleInputChange(event) {
+
+  // uploadHandler(event) {
+  //   const imagefile = event.target.files[0];
+  //   console.log(imagefile);
+  //   uploadFile(imagefile, this.reactS3config)
+  //     .then(data => {
+  //       console.log(data.location);
+  //       this.setState({ imageurl: data.location });
+  //     })
+  //     .catch(err => console.error(err));
+  // }
+
+  handleInputChange = (event) => {
     console.log(event.target);
     const { name, value } = event.target;
     this.setState({
@@ -69,21 +70,62 @@ class Login extends Component {
   //   }
   // }
 
+
+
+  // handleModalFormSubmit(event) {
+  //   event.preventDefault();
+  //   const SignUpInfo = this.state;
+  //   console.log(SignUpInfo);
+  //   if (this.state.password === this.state.passwordConfirmed) {
+  //     // console.log(event);
+  //     console.log(SignUpInfo);
+  //     Auth.signup({
+  //       email: SignUpInfo.email,
+  //       password: SignUpInfo.password,
+  //       firstName: SignUpInfo.firstName,
+  //       lastName: SignUpInfo.lastName,
+  //       userName: SignUpInfo.userName,
+  //       imageurl: SignUpInfo.imageurl
+  //     })
+  //       .then(res => {
+  //         window.location = res.data.redirect;
+  //       })
+  //       .catch(err => {
+  //         if (err.response.data.error) {
+  //           // Todo Show the flash message
+  //           //I'll change this to react side flash instead of a window alert
+  //           alert(err.response.data.error);
+  //         }
+  //       });
+  //   } else {
+  //     return console.log('please confirm password');
+  //   }
+  // }
+
+
+
   //login/authentication function
-  LoginHandler(event) {
+  LoginHandler = (event) => {
     event.preventDefault();
 
-    const loginInfo = this.state;
-    console.log(loginInfo);
+
     if (this.state.email && this.state.password) {
       Auth.login({
         email: this.state.email,
         password: this.state.password
       })
         .then(res => {
+
+          console.log(res.data.user);
+
+          this.props.setUser(res.data.user);
           console.log('back from the promise');
           //after successful authentication we'll redirect to the returned address (we set this on the server side)
-          window.location = res.data.redirect;
+
+          //withRouter can be used here in call back
+
+          //<Redicrect /> 
+          // res.data.redirect;
         })
         .catch(err => {
           if (err.response.data.error) {
@@ -94,118 +136,114 @@ class Login extends Component {
         });
     }
   }
-
-  handleModalFormSubmit(event) {
-    event.preventDefault();
-    const SignUpInfo = this.state;
-    console.log(SignUpInfo);
-    if (this.state.password === this.state.passwordConfirmed) {
-      // console.log(event);
-      console.log(SignUpInfo);
-      Auth.signup({
-        email: SignUpInfo.email,
-        password: SignUpInfo.password,
-        firstName: SignUpInfo.firstName,
-        lastName: SignUpInfo.lastName,
-        userName: SignUpInfo.userName,
-        imageurl: SignUpInfo.imageurl
-      })
-        .then(res => {
-          window.location = res.data.redirect;
-        })
-        .catch(err => {
-          if (err.response.data.error) {
-            // Todo Show the flash message
-            //I'll change this to react side flash instead of a window alert
-            alert(err.response.data.error);
-          }
-        });
-    } else {
-      return console.log('please confirm password');
-    }
-  }
-
 
 
   render() {
     //this statement is checking ot see if user is authenticated as set by the super constructor up top
     //if not authenticated they can proceed
-    if (this.state.authenticated === undefined) {
-      return null; // TODO Implement loading gear
-    }
+    // if (this.props.authenticated === undefined) {
+    //   return null; // TODO Implement loading gear
+    // }
+
 
     return (
+      <div>
+        {this.props.user ? (
+          <Router>
+            <Route
+              path='/main'
+              render={props => (
+                <Main
+                  {...props}
+                  user={this.state.userInfo} />
+              )}
 
-      <div id="login-card">
-        <div className='row'>
-          <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-            Sing up
+            />
+          </Router>
+        ) : (
+            <div id="login-card">
+              <div className='row'>
+                <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                  Sing up
           </button>
-        </div>
-        <div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div className="modal-dialog" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title" id="exampleModalLabel">Modal title</h5>
-                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
+              </div >
+              <div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal-dialog" role="document">
+                  <div className="modal-content">
+                    <div className="modal-header">
+                      <h5 className="modal-title" id="exampleModalLabel">Modal title</h5>
+                      <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div className="modal-body">
+                      <NewUser
+                        header='New User'
+                        handleInputChange={this.handleInputChange}
+                        firstName={this.props.firstName}
+                        lastName={this.props.lastName}
+                        imageurl={this.props.imageurl}
+                        userName={this.props.userName}
+                        email={this.props.email}
+                        password={this.props.password}
+                        passwordConfirmed={this.props.passwordConfirmed}
+                        handleModalFormSubmit={this.handleModalFormSubmit}
+                        uploadHandler={this.uploadHandler}
+                      />
+                    </div>
+                    <div className="modal-footer">
+                      <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="button" className="btn btn-primary" onClick={this.handleModalFormSubmit}>Save changes</button>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="modal-body">
-                <NewUser
-                  header='New User'
-                  handleInputChange={this.handleInputChange}
-                  firstName={this.state.firstName}
-                  lastName={this.state.lastName}
-                  imageurl={this.state.imageurl}
-                  userName={this.state.userName}
-                  email={this.state.email}
-                  password={this.state.password}
-                  passwordConfirmed={this.state.passwordConfirmed}
-                  handleModalFormSubmit={this.handleModalFormSubmit}
-                  uploadHandler={this.uploadHandler}
-                />
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" className="btn btn-primary" onClick={this.handleModalFormSubmit}>Save changes</button>
-              </div>
-            </div>
-          </div>
-        </div>
 
 
-
-
-
-
-
-
-
-
-
-
-        <input
-          // style={{textAlig: 'left'}}
-          name='email'
-          onChange={this.handleInputChange}
-          type='email'
-          label='Email'
-          s={12}
-        />
-        <input
-          name='password'
-          onChange={this.handleInputChange}
-          type='password'
-          label='password'
-          s={12}
-        />
-        <button id='login-button' waves='light' onClick={this.LoginHandler}>
-          Login
+              <input
+                // style={{textAlig: 'left'}}
+                name='email'
+                onChange={this.handleInputChange}
+                type='email'
+                label='Email'
+                s={12}
+              />
+              <input
+                name='password'
+                onChange={this.handleInputChange}
+                type='password'
+                label='password'
+                s={12}
+              />
+              <button id='login-button' waves='light' onClick={this.LoginHandler}>
+                Login
         </button>
-      </div >
+            </div >
+
+
+
+
+
+          )
+        }
+
+      </div>
+
     );
   }
 }
 
-export default Login;
+const mapStateToProps = state => {
+  return {
+    user: state.user
+  };
+
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    setUser: (user) => dispatch({ type: 'LOGIN', payload: user })
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
