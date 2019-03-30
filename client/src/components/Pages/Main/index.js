@@ -33,6 +33,19 @@ export class Main extends Component {
   }
 
 
+  //logout function
+  logoutFunction(event) {
+    console.log('inside logout func');
+    Auth.logout()
+      .then(res => {
+        window.location = res.data.redirect;
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+
   render() {
 
     if (this.state.authenticated === undefined) {
@@ -43,7 +56,8 @@ export class Main extends Component {
       return;
     }
     return (
-      <Wrapper />
+      <Wrapper
+        logout={this.logoutFunction} />
     );
   }
 }

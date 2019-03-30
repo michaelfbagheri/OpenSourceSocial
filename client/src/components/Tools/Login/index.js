@@ -5,7 +5,7 @@ import './style.css';
 import Auth from '../../../utils/Auth';
 import { config } from '../../../config/Config';
 import { connect } from 'react-redux';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import Main from '../../Pages/Main';
 
 // import { runInThisContext } from 'vm';
@@ -122,6 +122,8 @@ class Login extends Component {
           console.log('back from the promise');
           //after successful authentication we'll redirect to the returned address (we set this on the server side)
 
+
+
           //withRouter can be used here in call back
 
           //<Redicrect /> 
@@ -139,27 +141,14 @@ class Login extends Component {
 
 
   render() {
-    //this statement is checking ot see if user is authenticated as set by the super constructor up top
-    //if not authenticated they can proceed
-    // if (this.props.authenticated === undefined) {
-    //   return null; // TODO Implement loading gear
-    // }
+    //turnery on after return says if state(Redux) has a object called "user", which only gets set after login is 
+    //complete, redirect the page to /main, otherwise show the login page 
 
 
     return (
       <div>
         {this.props.user ? (
-          <Router>
-            <Route
-              path='/main'
-              render={props => (
-                <Main
-                  {...props}
-                  user={this.state.userInfo} />
-              )}
-
-            />
-          </Router>
+          <Redirect to='/main' />
         ) : (
             <div id="login-card">
               <div className='row'>
