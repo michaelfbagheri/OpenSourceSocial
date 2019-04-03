@@ -1,65 +1,59 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import Wrapper from '../../Wrapper';
 import Auth from '../../../utils/Auth';
-import API from '../../../utils/API';
+import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 
 export class Main extends Component {
-  constructor() {
-    super();
-
-    this.state = {
-      user: {},
-      userInfo: [],
-    };
-
-    Auth.session().then(user => {
-      console.log(user);
-      this.setState({
-        user: user,
-        authenticated: user.authenticated
-      });
-
-      this.getProfileInfo(this.state.user.user);
-    });
-  }
-
-  getProfileInfo(user) {
-    console.log(user.id);
-    API.getUserInfo(user.id)
-      .then(res => this.setState({
-        userInfo: res.data
-      }))
-      .catch(err => console.log(err));
-  }
 
 
   //logout function
-  logoutFunction(event) {
+  logoutFunction = (event) => {
+    event.preventDefault();
     console.log('inside logout func');
     Auth.logout()
       .then(res => {
-        window.location = res.data.redirect;
+        //set initialState-Redux using below function call within "mapDispatchToProps"
+        this.props.logoutUser();
       })
       .catch(err => {
         console.log(err);
+        // this.props.setUser(null);
       });
   }
 
 
   render() {
-
-    if (this.state.authenticated === undefined) {
-      return null; // TODO Implement loading gear
-    }
-    if (!this.state.authenticated) {
-      window.location = '/';
-      return;
-    }
     return (
-      <Wrapper
-        logout={this.logoutFunction} />
+      <Fragment>
+        {this.props.user.authenticated ? (
+          <Wrapper logout={this.logoutFunction} />
+        ) : (
+            <Redirect to='/' />
+          )}
+      </Fragment>
     );
   }
 }
 
-export default Main;
+
+
+//maps the initialState-Redux to props being used within this class
+const mapStateToProps = state => {
+  return {
+    user: state.user
+  };
+
+};
+
+//dispatch calls to Redux in order to set initialState when logged in and logged out based upon below functions
+const mapDispatchToProps = dispatch => {
+  return {
+    setUser: (user) => dispatch({ type: 'LOGIN', payload: user }),
+    logoutUser: () => dispatch({ type: 'LOGOUT' })
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Main);
+
+// export default Main;

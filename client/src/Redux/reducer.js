@@ -1,18 +1,25 @@
 import initialState from './initialState';
 
 
+
 const reducer = (state = initialState, action) => {
-  if (action.type === 'LOGIN') {
+
+  switch (action.type) {
+  case 'LOGIN':
     return {
       ...state,
       user: action.payload
-
     };
-
+  case 'LOGOUT':
+    return {
+      ...state,
+      user: {
+        authenticated: false
+      }
+    };
+  default:
+    return state;
   }
-
-
-  return state;
 };
 
 export default reducer;

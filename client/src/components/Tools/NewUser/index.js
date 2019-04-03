@@ -32,7 +32,6 @@ function NewUser(props) {
       <div className='row'>
         <input
           className='input-signup'
-          validate
           placeholder='email'
           name='email'
           type='email'

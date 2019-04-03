@@ -1,8 +1,9 @@
 
 
 const initialState = {
-  user: null
-
+  user: {
+    authenticated: false
+  }
 };
 
 
