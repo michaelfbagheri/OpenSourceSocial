@@ -3,7 +3,8 @@
 const initialState = {
   user: {
     authenticated: false
-  }
+  },
+  events: [],
 };
 
 

@@ -2,34 +2,33 @@ import React, { Component } from 'react';
 import { Row, Card, Modal, Tab, Tabs } from 'react-materialize';
 import { Map, Marker, Popup, TileLayer } from 'react-leaflet';
 import './style.css';
-import NeedView from '../NeedView/index';
+// import NeedView from '../NeedView/index';
 import Messages from '../Messages/index';
 
 class MapView extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      cntLat: props.cntLat,
-      cntLng: props.cntLng,
-      needs: [],
-      showPopUp: false
-    };
-  }
+
+  state = {
+    cntLat: 33.785,
+    cntLng: -84.385,
+    needs: [],
+    showPopUp: false
+  };
+
 
 
   render() {
     return (
-      <Card>
+      <div className="map-div">
         <Map
           className='map-on-card'
-          center={[this.props.cntLat, this.props.cntLng]}
+          center={[this.state.cntLat, this.state.cntLng]}
           zoom={14}
         >
           <TileLayer
             attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
           />
-          {this.props.needs.map(need => (
+          {/* {this.props.needs.map(need => (
             <Marker position={[need.lat, need.lng]}>
               <Popup>
                 <Modal
@@ -76,9 +75,9 @@ class MapView extends Component {
                 </Modal>
               </Popup>
             </Marker>
-          ))}
+          ))} */}
         </Map>
-      </Card >
+      </div >
     );
   }
 }

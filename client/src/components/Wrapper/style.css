@@ -1,0 +1,15 @@
+.event-map{
+    height: 200px;
+}
+
+.event-planner{
+    height: 30%;
+}
+
+.event-details{
+    float: left;
+}
+
+.calendar{
+    float: right;
+};

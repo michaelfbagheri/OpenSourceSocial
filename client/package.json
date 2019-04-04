@@ -12,6 +12,7 @@
     "moment-timezone": "^0.5.23",
     "mongo": "^0.1.0",
     "react": "^16.7.0",
+    "react-calendar": "^2.18.1",
     "react-dom": "^16.7.0",
     "react-geocode": "^0.1.2",
     "react-geosuggest": "^2.10.0",
