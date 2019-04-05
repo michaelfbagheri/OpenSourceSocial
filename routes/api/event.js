@@ -3,7 +3,9 @@ const eventController = require('../../controllers/eventController');
 
 //Create an event 
 router.route('/')
+    .get(eventController.findAllEvents)
     .post(eventController.createOneEvent)
+
 
 
 router.route('/myevents/:eventId')

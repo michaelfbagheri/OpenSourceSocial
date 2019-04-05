@@ -1,18 +1,14 @@
 import React from 'react';
-import Header from '../../Layout/Header';
-import { Fragment } from 'react'
-import Main from "../../Layout/Main";
-import Footer from "../../Layout/Footer"
+import Login from '../../Tools/Login';
 
-function Landing () {
-    return (
-        <Fragment>
-            <Header/>
-            <Main/>
-            <Footer/>
-        </Fragment>
-    )
+function Landing() {
+  return (
+    <section className="row">
+      <div className="col-md-6 event-list">
+        <Login />
+      </div>
+    </section >
+  );
 }
 
-
-export default Landing
+export default Landing;

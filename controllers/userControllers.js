@@ -38,8 +38,7 @@ const UserControllers = module.exports = {
         req.session.user = null
         console.log(req.user)
         res.json({
-            redirect: "/",
-            logged_out: true
+            authenticated: false
         })
     },
 
@@ -63,19 +62,23 @@ const UserControllers = module.exports = {
     getSession(req, res, next) {
         if (req.session.user) {
             const userInfo = {
+                authenticated: true,
+                firstName: req.session.user.firstName,
+                lastName: req.session.user.lastName,
+                userName: req.session.user.userName,
+                imageUrl: req.session.user.imageurl,
                 email: req.session.user.email,
                 id: req.session.user._id
             }
-            res.json({
+            res.json(
                 // TODO Don't expose sensitive data
-                user: userInfo,
-                authenticated: true
-            })
+                userInfo
+            )
         } else {
             res.json({
-                user: null,
-                authenticated: false
+                authenticate: false
             })
+
         }
     },
 

@@ -2,6 +2,13 @@ const db = require('../models');
 
 
 module.exports = {
+    findAllEvents: function (req, res) {
+        db.Event.find()
+            .sort({ postdate: -1 })
+            .then(dbModel => res.json(dbModel))
+            .catch(err => res.status(422).json(err))
+
+    },
     findAllEventsByHost: function (req, res) {
         db.Event.find({
             user: req.session.user._id

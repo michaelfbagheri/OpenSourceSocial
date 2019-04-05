@@ -14,9 +14,16 @@ router.route('/signup')
         function (req, res) {
             console.log(`returned to the router.route('/login) after a successful login, 
                         req.user = ${req.session.user}`)
+            var currentUser = {
+                authenticated: true,
+                firstName: req.session.user.firstName,
+                lastName: req.session.user.lastName,
+                userName: req.session.user.userName,
+                imageUrl: req.session.user.imageurl,
+                email: req.session.user.email
+            }
             res.json({
-                success: true,
-                redirect: "/main/get-help"
+                user: currentUser
             })
         }
     );
@@ -41,9 +48,16 @@ router
         function (req, res) {
             console.log(`returned to the router.route('/login) after a successful login, 
                         req.user = ${req.session.user}`)
+            var currentUser = {
+                authenticated: true,
+                firstName: req.session.user.firstName,
+                lastName: req.session.user.lastName,
+                userName: req.session.user.userName,
+                imageUrl: req.session.user.imageurl,
+                email: req.session.user.email
+            }
             res.json({
-                success: true,
-                redirect: "/main/get-help"
+                user: currentUser
             })
         }
     );
